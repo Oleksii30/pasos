@@ -14,11 +14,12 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-//0ISWXjyE4EoeNPUG
+const dbKey = process.env.dbKey
 
 const port = process.env.PORT || 3000
 
-let url = `mongodb+srv://Oleksiy:0ISWXjyE4EoeNPUG@cluster0-xox72.mongodb.net/mil-pasos?retryWrites=true&w=majority`
+let url = `mongodb+srv://Oleksiy:${dbKey}@cluster0-xox72.mongodb.net/mil-pasos?retryWrites=true&w=majority`
+
 
 mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true })
 .then(()=>console.log('Connected to mongo db'))

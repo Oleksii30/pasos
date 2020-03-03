@@ -2,7 +2,7 @@ const express = require('express')
 const Admin = require('../models/admin-model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const forToken = process.env.forToken
 
 const router = express.Router()
 
@@ -40,7 +40,7 @@ router.post('/api/login',(req, res, next)=>{
             res.status(401).json({message:"Auth failed 2"})
         }
         const token = jwt.sign({email:fetchedAdmin.email, userId:fetchedAdmin._id},
-            "jjkjhhfdxdcbbyyresddjllokmjhfd",
+            forToken,
              {expiresIn:"1h"})
 
        res.status(200).json({

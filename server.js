@@ -10,6 +10,7 @@ const courseRouter = require('./routes/courses')
 const teacherRouter = require('./routes/teacher')
 
 const throng = require('throng')
+const compression = require('compression')
 
 const WORKERS = process.env.WEB_CONCURRENCY || 1
 
@@ -21,6 +22,8 @@ throng({
 function start(){
 
 const app = express()
+
+app.use(compression())
 
 app.use(cors())
 app.use(bodyParser.json())

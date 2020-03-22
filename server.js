@@ -9,6 +9,17 @@ const questionRouter = require('./routes/question')
 const courseRouter = require('./routes/courses')
 const teacherRouter = require('./routes/teacher')
 
+const throng = require('throng')
+
+const WORKERS = process.env.WEB_CONCURRENCY || 1
+
+throng({
+    workers: WORKERS,
+    lifetime: Infinity
+  }, start)
+
+function start(){
+
 const app = express()
 
 app.use(cors())
@@ -40,3 +51,5 @@ app.use(teacherRouter)
 app.listen(port, ()=>{
     console.log("Server is listening on port 3000")
 })
+
+}

@@ -23,7 +23,7 @@ function start(){
 
 const app = express()
 
-app.use(compression({level:2}))
+app.use(compression({level:9}))
 
 app.use(cors())
 app.use(bodyParser.json())

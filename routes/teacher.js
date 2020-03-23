@@ -1,35 +1,26 @@
 const express = require('express')
 const Teacher = require('../models/teacher-model')
 const checkAuth = require('../midelware/check-auth')
-const multer = require('multer')
-const sharp = require('sharp')
+
 
 const router = express.Router()
 
-const upload = multer({
-    fileFilter(req, file, cb){
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)){
-            return cb(new Error('Please upload an image'))
-        }
-        cb(undefined, true)
-    }
-})
 
-router.post('/teachers/create', upload.single('upload'), checkAuth, async (req, res, next)=>{
+router.post('/teachers/create', checkAuth, async (req, res, next)=>{
    
     try{
-        const image = await sharp(req.file.buffer).png().toBuffer()
-      
+             
         const teacher = new Teacher({
             name:req.body.name,
             description:req.body.description,
+            avatar:req.body.url,
+            header:req.body.header,
+            quote:req.body.quote
         })
 
-        const newTeacher = await teacher.save()
-        newTeacher.avatar = image
-        await newTeacher.save()
+        await teacher.save()
+        
         res.status(201).send()
-
     }catch(err){
         res.status(400).send()
     }
@@ -67,7 +58,7 @@ router.get('/teacher/:id', checkAuth, (req,res,next)=>{
 
 router.put('/teachers/update/:id', checkAuth, async (req,res,next)=>{
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'description']
+    const allowedUpdates = ['name', 'description', 'url', 'header', 'quote']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
     if (!isValidOperation) {
@@ -90,23 +81,6 @@ router.put('/teachers/update/:id', checkAuth, async (req,res,next)=>{
     }
 } )
 
-router.post('/teachers/update-avatar/:id',upload.single('upload'),checkAuth, async (req, res, next)=>{
-  
-    try{
 
-       
-        const image = await sharp(req.file.buffer).png().toBuffer()
-        
-        const teacher = await Teacher.findById(req.params.id)
-              
-        teacher.avatar = image
-        await teacher.save()
-             
-        res.status(201).send()
-
-    }catch(err){
-        res.status(400).send()
-    }
-})
 
 module.exports = router

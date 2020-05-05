@@ -58,7 +58,7 @@ router.get('/teacher/:id', checkAuth, (req,res,next)=>{
 
 router.put('/teachers/update/:id', checkAuth, async (req,res,next)=>{
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'description', 'url', 'header', 'quote']
+    const allowedUpdates = ['name', 'description', 'avatar', 'header', 'quote']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
     if (!isValidOperation) {

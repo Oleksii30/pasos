@@ -6,14 +6,13 @@ const checkAuth = require('../midelware/check-auth')
 const router = express.Router()
 
 
-router.post('/teachers/create', checkAuth, async (req, res, next)=>{
+router.post('/teachers/create', async (req, res, next)=>{
    
-    try{
-             
+    try{             
         const teacher = new Teacher({
             name:req.body.name,
             description:req.body.description,
-            avatar:req.body.url,
+            avatar:req.body.avatar,
             header:req.body.header,
             quote:req.body.quote
         })
@@ -27,36 +26,38 @@ router.post('/teachers/create', checkAuth, async (req, res, next)=>{
 
 })
 
-router.get('/teachers', (req, res, next)=>{
-    Teacher.find()
-    .then(teachers=>{
+router.get('/teachers', async (req, res, next)=>{
+    try{
+        const teachers = await Teacher.find()
         res.status(200).send(teachers)
-    })
+    }catch(error) {
+        res.status(500).send(error)
+    }    
 })
 
-router.delete('/teachers/:id',checkAuth, (req, res, next)=>{
-    Teacher.deleteOne({_id: req.params.id})
-    .then(result=>{
+router.delete('/teachers/:id', async (req, res, next)=>{
+    try{
+        const result = await Teacher.deleteOne({_id: req.params.id})
         if (result.n > 0){
             res.status(200).json({message:"Teacher deleted"})
-            }else{
-                res.status(401).json({message:"Not authorised"})
-            }
-       
-        })
+        }else{
+            res.status(401).json({message:"Not authorised"})
+        }
+    }catch(error){
+        res.status(500).send(error)
+    }    
 })
 
-router.get('/teacher/:id', checkAuth, (req,res,next)=>{
-    Teacher.findById(req.params.id)
-    .then(teacher=>{
-       
+router.get('/teacher/:id', async (req,res,next)=>{
+    try{
+        const teacher = await Teacher.findById(req.params.id)
         res.status(200).json(teacher)
-    }).catch(err=>{
+    }catch(error){
         res.status(404).send()
-    })
+    }    
 })
 
-router.put('/teachers/update/:id', checkAuth, async (req,res,next)=>{
+router.put('/teachers/update/:id', async (req,res,next)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'description', 'avatar', 'header', 'quote']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))

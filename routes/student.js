@@ -5,21 +5,14 @@ const checkAuth = require('../midelware/check-auth')
 const router = express.Router()
 
 
-router.post('/api/add-student',(req,res,next)=>{
-   
-    const student = new Student({
-        lenguage:req.body.lenguage,
-        level:req.body.level,
-        name:req.body.name,
-        lastname:req.body.lastname,
-        email:req.body.email,
-        phone:req.body.phone
-    })
-    student.save().then(result=>{
-        res.status(200).json(result)
-    }).catch(err=>{
-        res.sendStatus(500)
-    })
+router.post('/add-student',async (req,res,next)=>{
+   try{  
+    const student = new Student(req.body)
+    const result = await student.save()
+    res.status(200).json(result)
+   }catch(error){
+    res.sendStatus(500)
+   }    
 })
 
 

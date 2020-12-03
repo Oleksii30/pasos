@@ -3,32 +3,29 @@ const path = require ('path')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const enforce = require('express-sslify')
 const adminRouter = require('./routes/admin')
 const studentRouter = require('./routes/student')
 const questionRouter = require('./routes/question')
 const courseRouter = require('./routes/courses')
 const teacherRouter = require('./routes/teacher')
+const reviewRouter = require('./routes/reviews')
 
-const throng = require('throng')
 const compression = require('compression')
 
-const WORKERS = process.env.WEB_CONCURRENCY || 1
-
-throng({
-    workers: WORKERS,
-    lifetime: Infinity
-  }, start)
-
-function start(){
 
 const app = express()
 
 app.use(compression({level:9}))
 
 app.use(cors())
+if (process.env.NODE_ENV === 'production') {
+    app.use(enforce.HTTPS({trustProtoHeader:true}))
+  }
+
 app.use(bodyParser.json())
 
-const dbKey = process.env.dbKey
+const dbKey = 'YsXvVHB1KVR3kyZE'
 
 const port = process.env.PORT || 3000
 
@@ -47,6 +44,7 @@ app.use(studentRouter)
 app.use(questionRouter)
 app.use(courseRouter)
 app.use(teacherRouter)
+app.use(reviewRouter)
 
 
 
@@ -55,4 +53,4 @@ app.listen(port, ()=>{
     console.log("Server is listening on port 3000")
 })
 
-}
+
